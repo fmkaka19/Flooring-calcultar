@@ -1,0 +1,10 @@
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Example to disallow an admin or private folder (uncomment and edit if needed)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Path to the sitemap file
+Sitemap: https://www.example.com/sitemap.xml

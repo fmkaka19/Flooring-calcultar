@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Flooring Calculator</title>
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section with Logo -->
+        <header class="app-header">
+            <div class="logo-container">
+                <!-- SVG Tile Pattern Logo in Parrot Green -->
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="9" height="9" rx="1.5" fill="var(--primary)" />
+                    <rect x="13" y="2" width="9" height="9" rx="1.5" fill="var(--primary)" opacity="0.7" />
+                    <rect x="2" y="13" width="9" height="9" rx="1.5" fill="var(--primary)" opacity="0.5" />
+                    <rect x="13" y="13" width="9" height="9" rx="1.5" fill="var(--primary)" opacity="0.9" />
+                    <path d="M6.5 4.5V8.5M4.5 6.5H8.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                    <path d="M17.5 15.5V19.5M15.5 17.5H19.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>Floor<span>Calc</span></h1>
+                    <p>Smart Flooring Estimator</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="calculator-grid">
+            <!-- Left Side: Inputs Form -->
+            <section class="calculator-card input-section">
+                <div class="card-header">
+                    <h2>Calculate Floor Requirements</h2>
+                    <p>Enter your room details, material price, and wastage percentage to get an instant estimate.</p>
+                </div>
+
+                <form id="calcForm" onsubmit="event.preventDefault();">
+                    <!-- Global Configuration Card -->
+                    <div class="config-card">
+                        <h3>1. Calculator Configuration</h3>
+                        <div class="config-grid">
+                            <!-- Unit Selector -->
+                            <div class="form-group">
+                                <label for="unitSelect">Measurement Unit</label>
+                                <select id="unitSelect" class="form-control">
+                                    <option value="feet" selected>Feet (Sq. Ft.)</option>
+                                    <option value="meters">Meters (Sq. M.)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Price Input -->
+                            <div class="form-group">
+                                <label for="priceInput">Price per <span class="unit-label">Sq. Ft.</span></label>
+                                <div class="input-wrapper">
+                                    <span class="prefix">$</span>
+                                    <input type="number" id="priceInput" class="form-control" placeholder="0.00" min="0" step="0.01">
+                                </div>
+                            </div>
+
+                            <!-- Wastage Percentage Dropdown/Custom Input -->
+                            <div class="form-group">
+                                <label for="wastageSelect">Wastage allowance</label>
+                                <select id="wastageSelect" class="form-control">
+                                    <option value="0">0% (No wastage)</option>
+                                    <option value="5">5% (Recommended for simple rooms)</option>
+                                    <option value="10" selected>10% (Standard installation)</option>
+                                    <option value="15">15% (Rooms with many corners/angles)</option>
+                                    <option value="20">20% (Diagonal installation patterns)</option>
+                                    <option value="custom">Custom Percentage...</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Wastage Input (Hidden by default, shown when custom selected) -->
+                            <div class="form-group hidden" id="customWastageGroup">
+                                <label for="customWastageInput">Custom Wastage (%)</label>
+                                <input type="number" id="customWastageInput" class="form-control" placeholder="10" min="0" max="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rooms List Container -->
+                    <div class="rooms-section">
+                        <div class="section-title-bar">
+                            <h3>2. Rooms Details</h3>
+                            <button type="button" id="addRoomBtn" class="btn btn-secondary-outline btn-sm">
+                                <span class="btn-icon">+</span> Add Another Room
+                            </button>
+                        </div>
+                        
+                        <div id="roomsContainer" class="rooms-container">
+                            <!-- Dynamic Room Card Templates will go here -->
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="button" id="resetBtn" class="btn btn-danger-outline">Reset Calculator</button>
+                        <button type="submit" id="calculateBtn" class="btn btn-primary">Calculate Total</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Side: Results Panel -->
+            <section class="calculator-card results-section">
+                <div class="card-header">
+                    <h2>Estimation Summary</h2>
+                    <p>Real-time calculation breakdown for your project.</p>
+                </div>
+
+                <div class="results-display">
+                    <!-- Total Material Needed Header -->
+                    <div class="result-highlight-card">
+                        <span class="highlight-label">Total Material Required (incl. wastage)</span>
+                        <div class="highlight-value" id="resTotalMaterial">0.00 <span class="highlight-unit">Sq. Ft.</span></div>
+                    </div>
+
+                    <!-- Cost Highlight Card -->
+                    <div class="result-highlight-card cost-card">
+                        <span class="highlight-label">Estimated Total Cost</span>
+                        <div class="highlight-value" id="resTotalCost">$0.00</div>
+                    </div>
+
+                    <!-- Breakdown Details List -->
+                    <div class="breakdown-details">
+                        <h3>Detailed Breakdown</h3>
+                        
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Net Floor Area (Base Area)</span>
+                            <span class="breakdown-value" id="resBaseArea">0.00 sq. ft</span>
+                        </div>
+                        
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Wastage Material Allowance (<span id="resWastagePctText">10</span>%)</span>
+                            <span class="breakdown-value" id="resWastageAmount">0.00 sq. ft</span>
+                        </div>
+                        
+                        <div class="breakdown-item border-top">
+                            <span class="breakdown-label">Material Cost (Net Area)</span>
+                            <span class="breakdown-value" id="resBaseCost">$0.00</span>
+                        </div>
+
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Material Cost (Wastage)</span>
+                            <span class="breakdown-value" id="resWastageCost">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Room-wise area list -->
+                    <div class="room-breakdown-section hidden" id="roomBreakdownSection">
+                        <h3>Area per Room</h3>
+                        <ul class="room-breakdown-list" id="roomBreakdownList">
+                            <!-- Dynamic list items will be injected here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 FloorCalc. Beautifully built for precise estimations.</p>
+        </footer>
+    </div>
+
+    <!-- Main JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
