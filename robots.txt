@@ -1,5 +1,3 @@
 User-agent: *
-Disallow:
 
 Sitemap: https://flooring-calcultar.vercel.app/sitemap.xml
-Host: https://flooring-calcultar.vercel.app
